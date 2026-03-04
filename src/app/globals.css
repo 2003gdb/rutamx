@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  /* Deep Ocean Blue Palette */
+  --primary: #1E40AF;
+  --primary-light: #3B82F6;
+  --primary-dark: #1E3A8A;
+
+  /* Dark Theme */
+  --background: #0F172A;
+  --background-secondary: #020617;
+  --surface: #1E293B;
+  --surface-light: #334155;
+  --surface-hover: #475569;
+
+  /* Borders */
+  --border: #334155;
+  --border-light: #475569;
+
+  /* Text */
+  --foreground: #F8FAFC;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  /* Accent Colors */
+  --accent-green: #22C55E;
+  --accent-red: #EF4444;
+  --accent-yellow: #EAB308;
+  --accent-orange: #F97316;
+
+  /* Agency Colors */
+  --metrobus: #DC2626;
+  --metro: #F97316;
+  --rtp: #22C55E;
+  --trolebus: #3B82F6;
+  --cablebus: #8B5CF6;
+
+  /* Glow Effect */
+  --glow: rgba(59, 130, 246, 0.5);
+  --glow-strong: rgba(59, 130, 246, 0.8);
+
+  /* Radius */
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-surface: var(--surface);
+  --color-surface-light: var(--surface-light);
+  --color-border: var(--border);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent-green: var(--accent-green);
+  --color-accent-red: var(--accent-red);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-metrobus: var(--metrobus);
+  --color-metro: var(--metro);
+  --color-rtp: var(--rtp);
+  --color-trolebus: var(--trolebus);
+  --color-cablebus: var(--cablebus);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  border-color: var(--border);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-hover);
+}
+
+/* Map container styles */
+.mapboxgl-map {
+  font-family: inherit;
+}
+
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
+
+/* Glow animation for routes */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.route-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.2);
+}
+
+/* Chart container */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
