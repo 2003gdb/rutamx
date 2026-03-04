@@ -9,8 +9,9 @@ import {
   Bus,
   Settings,
   FileBarChart,
-  Zap,
+  LogOut,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -26,10 +27,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center px-6">
-        <Link href="/dashboard" className="flex items-center gap-2 mr-8">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <Zap className="h-5 w-5 text-white" />
-          </div>
+        <Link href="/dashboard" className="flex items-center mr-8">
           <span className="text-xl font-bold text-foreground">
             Ruta<span className="text-primary-light">MX</span>
           </span>
@@ -59,10 +57,10 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="h-2 w-2 rounded-full bg-accent-green animate-pulse" />
-            <span className="text-text-secondary">Sistema Activo</span>
-          </div>
+          <Button variant="outline" size="default">
+            <LogOut className="h-4 w-4" />
+            Cerrar Sesión
+          </Button>
         </div>
       </div>
     </header>
