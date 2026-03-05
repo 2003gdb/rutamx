@@ -69,6 +69,7 @@ export interface FleetBus {
 export interface KPIData {
   roi: number;
   roiTrend: number;
+  roiEstimated: number;
   fuelSavingsMXN: number;
   fuelSavingsTrend: number;
   co2ReductionTons: number;
@@ -79,6 +80,12 @@ export interface KPIData {
   activeBuses: number;
   totalRoutes: number;
   totalPassengersDaily: number;
+}
+
+export interface ROIMonthlyData {
+  month: string;
+  estimated: number;
+  actual: number | null;
 }
 
 // Operations Types

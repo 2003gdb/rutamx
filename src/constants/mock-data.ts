@@ -1,5 +1,6 @@
 import {
   KPIData,
+  ROIMonthlyData,
   Route,
   ScheduleEntry,
   ServiceFrequency,
@@ -14,6 +15,7 @@ import {
 export const MOCK_KPI: KPIData = {
   roi: 23.5,
   roiTrend: 2.3,
+  roiEstimated: 21.0,
   fuelSavingsMXN: 45600000,
   fuelSavingsTrend: 5.7,
   co2ReductionTons: 12450,
@@ -289,6 +291,21 @@ export const MOCK_FLEET: FleetBus[] = [
   { id: 'bus-003', modelId: 'yutong-e12', routeId: 'mb-2', status: 'charging', currentBatteryPercent: 25, lastLocation: [-99.1876, 19.4023], assignedDriver: 'Miguel Sánchez', totalKmDriven: 52100 },
   { id: 'bus-004', modelId: 'volvo-7900e', routeId: 'trolebus-1', status: 'maintenance', currentBatteryPercent: 0, lastLocation: [-99.1400, 19.4200], assignedDriver: 'Roberto Díaz', totalKmDriven: 67800 },
   { id: 'bus-005', modelId: 'byd-k7', routeId: 'rtp-1', status: 'active', currentBatteryPercent: 92, lastLocation: [-99.1700, 19.3400], assignedDriver: 'Luis Hernández', totalKmDriven: 28450 },
+];
+
+export const MOCK_ROI_MONTHLY: ROIMonthlyData[] = [
+  { month: 'Ene', estimated: 18.0, actual: 17.2 },
+  { month: 'Feb', estimated: 18.5, actual: 18.8 },
+  { month: 'Mar', estimated: 19.0, actual: 20.1 },
+  { month: 'Abr', estimated: 19.5, actual: 19.3 },
+  { month: 'May', estimated: 20.0, actual: 21.4 },
+  { month: 'Jun', estimated: 20.5, actual: 20.8 },
+  { month: 'Jul', estimated: 21.0, actual: 22.0 },
+  { month: 'Ago', estimated: 21.0, actual: 21.5 },
+  { month: 'Sep', estimated: 21.0, actual: 22.8 },
+  { month: 'Oct', estimated: 21.0, actual: 23.1 },
+  { month: 'Nov', estimated: 21.0, actual: 23.5 },
+  { month: 'Dic', estimated: 21.0, actual: null },
 ];
 
 export const ROUTE_AGENCY_COUNT = [
