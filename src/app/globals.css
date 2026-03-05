@@ -2,29 +2,29 @@
 
 :root {
   /* ── CORE PALETTE ── */
-  --bg-base: #111214;
-  --bg-surface: #1a1c20;
-  --bg-elevated: #22252b;
-  --bg-panel: #1e2026;
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --bg-panel: #f8fafc;
 
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-muted: rgba(255, 255, 255, 0.12);
-  --border-strong: rgba(255, 255, 255, 0.22);
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-muted: rgba(0, 0, 0, 0.10);
+  --border-strong: rgba(0, 0, 0, 0.18);
 
-  --text-primary: #f0f2f5;
-  --text-secondary: #9ba3af;
-  --text-muted: #5c636e;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
 
   /* ── ACCENT ── */
-  --accent: #2F80ED;
-  --accent-glow: rgba(47, 128, 237, 0.18);
-  --accent-dim: rgba(47, 128, 237, 0.08);
+  --accent: #1e40af;
+  --accent-glow: rgba(30, 64, 175, 0.15);
+  --accent-dim: rgba(30, 64, 175, 0.08);
 
   /* ── SEMANTIC ── */
   --success: #22c77a;
   --warning: #f5a623;
   --danger: #e84c4c;
-  --info: #2F80ED;
+  --info: #1e40af;
 
   /* ── AGENCY COLORS (preserved from original) ── */
   --metrobus: #DC2626;
@@ -41,9 +41,9 @@
   --radius-full: 999px;
 
   /* ── SHADOW ── */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.14);
   --shadow-accent: 0 0 0 2px var(--accent-glow);
 
   /* ── LEGACY ALIASES ── */
@@ -82,6 +82,7 @@
   --color-primary: var(--accent);
   --color-primary-light: var(--accent);
   --color-accent: var(--accent);
+  --color-accent-foreground: #ffffff;
   --color-accent-dim: var(--accent-dim);
   --color-accent-glow: var(--accent-glow);
 
@@ -200,7 +201,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-muted);
+  background: var(--text-muted);
 }
 
 /* ── MAP CONTAINER STYLES ── */
@@ -265,25 +266,25 @@ body {
 .badge-accent {
   background: var(--accent-dim);
   color: var(--accent);
-  border: 1px solid rgba(47, 128, 237, 0.25);
+  border: 1px solid rgba(30, 64, 175, 0.25);
 }
 
 .badge-success {
-  background: rgba(34, 199, 122, 0.08);
+  background: rgba(34, 199, 122, 0.10);
   color: var(--success);
-  border: 1px solid rgba(34, 199, 122, 0.2);
+  border: 1px solid rgba(34, 199, 122, 0.25);
 }
 
 .badge-warning {
-  background: rgba(245, 166, 35, 0.08);
+  background: rgba(245, 166, 35, 0.10);
   color: var(--warning);
-  border: 1px solid rgba(245, 166, 35, 0.2);
+  border: 1px solid rgba(245, 166, 35, 0.25);
 }
 
 .badge-danger {
-  background: rgba(232, 76, 76, 0.08);
+  background: rgba(232, 76, 76, 0.10);
   color: var(--danger);
-  border: 1px solid rgba(232, 76, 76, 0.2);
+  border: 1px solid rgba(232, 76, 76, 0.25);
 }
 
 .badge-neutral {
@@ -304,11 +305,21 @@ body {
   box-shadow: var(--shadow-accent);
 }
 
-/* ── INPUT FOCUS STATES �── */
+/* ── INPUT FOCUS STATES ── */
 input:focus,
 textarea:focus,
 select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
   outline: none;
+}
+
+/* ── AURORA BACKGROUND ANIMATION ── */
+@keyframes aurora {
+  0% {
+    background-position: 50% 50%, 50% 50%;
+  }
+  100% {
+    background-position: 350% 50%, 350% 50%;
+  }
 }

@@ -32,7 +32,7 @@ export function DoughnutChart({ data, centerText }: DoughnutChartProps) {
       legend: {
         position: "right" as const,
         labels: {
-          color: "#94A3B8",
+          color: "#475569",
           font: {
             size: 11,
           },
@@ -42,10 +42,10 @@ export function DoughnutChart({ data, centerText }: DoughnutChartProps) {
         },
       },
       tooltip: {
-        backgroundColor: "#1E293B",
-        titleColor: "#F8FAFC",
-        bodyColor: "#94A3B8",
-        borderColor: "#334155",
+        backgroundColor: "#ffffff",
+        titleColor: "#0f172a",
+        bodyColor: "#475569",
+        borderColor: "#e2e8f0",
         borderWidth: 1,
       },
     },

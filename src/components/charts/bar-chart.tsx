@@ -43,35 +43,35 @@ export function BarChart({ data, horizontal = false }: BarChartProps) {
       legend: {
         position: "top" as const,
         labels: {
-          color: "#94A3B8",
+          color: "#475569",
           font: {
             size: 12,
           },
         },
       },
       tooltip: {
-        backgroundColor: "#1E293B",
-        titleColor: "#F8FAFC",
-        bodyColor: "#94A3B8",
-        borderColor: "#334155",
+        backgroundColor: "#ffffff",
+        titleColor: "#0f172a",
+        bodyColor: "#475569",
+        borderColor: "#e2e8f0",
         borderWidth: 1,
       },
     },
     scales: {
       x: {
         grid: {
-          color: "#334155",
+          color: "#e2e8f0",
         },
         ticks: {
-          color: "#94A3B8",
+          color: "#475569",
         },
       },
       y: {
         grid: {
-          color: "#334155",
+          color: "#e2e8f0",
         },
         ticks: {
-          color: "#94A3B8",
+          color: "#475569",
         },
       },
     },

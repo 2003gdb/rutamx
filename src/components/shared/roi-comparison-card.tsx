@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ROIMonthlyData } from "@/types";
@@ -50,7 +50,6 @@ export function ROIComparisonCard({
   const variance = roiActual - roiEstimated;
   const isPositive = variance >= 0;
 
-  const [showEstimator, setShowEstimator] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(MOCK_ROUTES[0].id);
   const [selectedModel, setSelectedModel] = useState(BUS_MODELS[0].id);
   const [buses, setBuses] = useState(10);
@@ -65,45 +64,45 @@ export function ROIComparisonCard({
 
   return (
     <Card className={cn("card-hover", className)}>
-      <CardHeader className="pb-2">
-        <div className="flex items-start justify-between">
-          <div>
+      <div className="grid lg:grid-cols-2 divide-x divide-border/30">
+        {/* LEFT COLUMN: Summary, monthly bars and legend */}
+        <div className="p-4">
+          {/* ROI Summary */}
+          <div className="mb-4">
             <CardTitle className="text-sm font-medium text-text-secondary">
               ROI Anual
             </CardTitle>
             <p className="text-3xl font-bold tracking-tight mt-1">
               {roiActual.toFixed(1)}%
             </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-text-muted">Estimado</p>
-            <p className="text-lg font-semibold text-text-secondary">
-              {roiEstimated.toFixed(1)}%
-            </p>
-          </div>
-        </div>
 
-        <div
-          className={cn(
-            "flex items-center gap-1 text-xs mt-1",
-            isPositive ? "text-accent-green" : "text-accent-red"
-          )}
-        >
-          {isPositive ? (
-            <TrendingUp className="h-3 w-3" />
-          ) : (
-            <TrendingDown className="h-3 w-3" />
-          )}
-          <span>
-            {isPositive ? "+" : ""}
-            {variance.toFixed(1)}% vs estimado
-          </span>
-        </div>
-      </CardHeader>
+            <div className="mt-3">
+              <p className="text-xs text-text-muted">Estimado</p>
+              <p className="text-lg font-semibold text-text-secondary mt-0.5">
+                {roiEstimated.toFixed(1)}%
+              </p>
+            </div>
 
-      <CardContent className="pb-4">
-        {/* Barras comparativas */}
-        <div className="space-y-2 mt-2">
+            <div
+              className={cn(
+                "flex items-center gap-1 text-xs mt-2",
+                isPositive ? "text-accent-green" : "text-accent-red"
+              )}
+            >
+              {isPositive ? (
+                <TrendingUp className="h-3 w-3" />
+              ) : (
+                <TrendingDown className="h-3 w-3" />
+              )}
+              <span>
+                {isPositive ? "+" : ""}
+                {variance.toFixed(1)}% vs estimado
+              </span>
+            </div>
+          </div>
+
+          {/* Barras comparativas */}
+          <div className="space-y-2 mt-4">
           {monthlyData.map((item) => (
             <div key={item.month} className="flex items-center gap-2">
               <span className="text-xs text-text-muted w-7 shrink-0">
@@ -157,34 +156,26 @@ export function ROIComparisonCard({
           ))}
         </div>
 
-        {/* Leyenda */}
-        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border/30">
-          <div className="flex items-center gap-1.5">
-            <div className="h-2 w-4 rounded-full bg-primary/40" />
-            <span className="text-xs text-text-muted">Estimado</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="h-2 w-4 rounded-full bg-accent-green" />
-            <span className="text-xs text-text-muted">Real (sobre estimado)</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="h-2 w-4 rounded-full bg-accent-red" />
-            <span className="text-xs text-text-muted">Real (bajo estimado)</span>
+          {/* Leyenda */}
+          <div className="flex flex-wrap items-center gap-3 mt-3 pt-3 border-t border-border/30">
+            <div className="flex items-center gap-1.5">
+              <div className="h-2 w-4 rounded-full bg-primary/40" />
+              <span className="text-xs text-text-muted">Estimado</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="h-2 w-4 rounded-full bg-accent-green" />
+              <span className="text-xs text-text-muted">Real (sobre)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="h-2 w-4 rounded-full bg-accent-red" />
+              <span className="text-xs text-text-muted">Real (bajo)</span>
+            </div>
           </div>
         </div>
 
-        {/* Estimador */}
-        <div className="mt-3 border-t border-border/30 pt-3">
-          <button
-            onClick={() => setShowEstimator((v) => !v)}
-            className="flex items-center gap-1.5 text-xs text-primary-light hover:text-primary-light/80 transition-colors w-full"
-          >
-            <ChevronDown className={cn("h-3 w-3 transition-transform", showEstimator && "rotate-180")} />
-            Estimar ROI por ruta y flotilla
-          </button>
-
-          {showEstimator && (
-            <div className="mt-3 space-y-2">
+        {/* RIGHT COLUMN: Estimator (always visible) */}
+        <div className="p-4">
+          <div className="space-y-2">
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-xs text-text-muted block mb-1">Ruta</label>
@@ -253,11 +244,11 @@ export function ROIComparisonCard({
                   <div className="p-2 rounded-lg bg-surface-light space-y-1">
                     <p className="text-xs font-medium text-text-secondary">Costo operativo anual (eléctrico vs diésel)</p>
                     <div className="flex justify-between text-xs">
-                      <span className="text-text-muted">⚡ Eléctrico</span>
+                      <span className="text-text-muted">Eléctrico</span>
                       <span className="text-primary-light font-medium">{fmt(est.electricCostPerYear)}</span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-text-muted">⛽ Diésel equiv.</span>
+                      <span className="text-text-muted">Diésel equiv.</span>
                       <span className="text-accent-red font-medium">{fmt(est.dieselCostPerYear)}</span>
                     </div>
                     <div className="flex justify-between text-xs border-t border-border/30 pt-1">
@@ -266,15 +257,14 @@ export function ROIComparisonCard({
                     </div>
                   </div>
                   <div className="p-2 rounded-lg bg-accent-green/5 border border-accent-green/20">
-                    <p className="text-xs text-text-muted">CO₂ evitado/año</p>
+                    <p className="text-xs text-text-muted">CO2 evitado/año</p>
                     <p className="text-sm font-bold text-accent-green">{Math.round(est.co2).toLocaleString("es-MX")} ton</p>
                   </div>
                 </div>
               )}
-            </div>
-          )}
+          </div>
         </div>
-      </CardContent>
+      </div>
     </Card>
   );
 }

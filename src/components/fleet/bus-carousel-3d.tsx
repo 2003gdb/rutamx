@@ -122,7 +122,7 @@ export function BusCarousel3D() {
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
-      <Card className="relative h-[600px] overflow-hidden bg-background-dark">
+      <Card className="relative h-[600px] overflow-hidden bg-slate-900">
         <Canvas>
           <CarouselScene busColor={currentColor} />
         </Canvas>

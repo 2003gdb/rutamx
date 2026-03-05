@@ -1,57 +1,68 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bus } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { BubbleBackground } from "@/components/ui/bubble-background";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="max-w-md w-full">
-        <CardHeader className="space-y-4">
-          <div className="flex items-center justify-center gap-2 text-xl font-bold">
-            <Bus className="h-6 w-6 text-primary" />
-            <span className="text-foreground">
-              Ruta<span className="text-primary">MX</span>
-            </span>
+    <div className="min-h-screen flex">
+      <div className="w-1/2 flex items-center justify-center bg-white">
+        <div className="w-full max-w-md px-8">
+          <div className="mb-10">
+            <h1 className="text-4xl font-bold text-gray-900">Iniciar sesión</h1>
           </div>
-          <CardTitle className="text-2xl font-bold text-center">
-            Iniciar Sesión
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="text-sm text-text-secondary"
+
+          <form className="space-y-6">
+            <div>
+              <Input
+                type="email"
+                placeholder="Correo electrónico"
+                className="h-14 px-4 text-base bg-white border-gray-300 rounded-xl"
+              />
+            </div>
+
+            <div>
+              <Input
+                type="password"
+                placeholder="Contraseña"
+                className="h-14 px-4 text-base bg-white border-gray-300 rounded-xl"
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox id="remember" />
+                <label
+                  htmlFor="remember"
+                  className="text-sm text-gray-700 cursor-pointer"
+                >
+                  Recuérdame
+                </label>
+              </div>
+              <Link
+                href="/contact-admin"
+                className="text-sm text-[#1e40af] hover:underline"
+              >
+                Contactar admin
+              </Link>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-14 bg-[#1e40af] hover:bg-[#1e3a8a] text-white text-base font-semibold rounded-full"
             >
-              Correo electrónico
-            </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="correo@ejemplo.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="text-sm text-text-secondary"
-            >
-              Contraseña
-            </label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-            />
-          </div>
-          <Button type="button" className="w-full">
-            Iniciar Sesión
-          </Button>
-        </CardContent>
-      </Card>
+              Iniciar sesión
+            </Button>
+          </form>
+        </div>
+      </div>
+
+      <div className="w-1/2 relative">
+        <BubbleBackground interactive />
+      </div>
     </div>
   );
 }

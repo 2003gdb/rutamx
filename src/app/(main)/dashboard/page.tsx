@@ -166,37 +166,37 @@ export default function DashboardPage() {
         <p className="text-xs text-text-muted">Actualizado: {new Date().toLocaleTimeString("es-MX")}</p>
       </div>
 
-      {/* ROI + KPIs */}
-      <div className="grid gap-3 lg:grid-cols-3">
-        <ROIComparisonCard
-          roiActual={MOCK_KPI.roi}
-          roiEstimated={MOCK_KPI.roiEstimated}
-          monthlyData={MOCK_ROI_MONTHLY}
+      {/* ROI Card - Full Width */}
+      <ROIComparisonCard
+        roiActual={MOCK_KPI.roi}
+        roiEstimated={MOCK_KPI.roiEstimated}
+        monthlyData={MOCK_ROI_MONTHLY}
+      />
+
+      {/* KPIs */}
+      <div className="grid gap-3 md:grid-cols-3">
+        <KPICard
+          title="Ahorro Combustible"
+          value={formatCurrency(MOCK_KPI.fuelSavingsMXN)}
+          trend={MOCK_KPI.fuelSavingsTrend}
+          trendLabel="vs mes ant."
+          icon={<Fuel className="h-4 w-4" />}
         />
-        <div className="grid gap-3 md:grid-cols-3 lg:col-span-2">
-          <KPICard
-            title="Ahorro Combustible"
-            value={formatCurrency(MOCK_KPI.fuelSavingsMXN)}
-            trend={MOCK_KPI.fuelSavingsTrend}
-            trendLabel="vs mes ant."
-            icon={<Fuel className="h-4 w-4" />}
-          />
-          <KPICard
-            title="CO₂ Reducido"
-            value={`${formatNumber(MOCK_KPI.co2ReductionTons)} ton`}
-            trend={MOCK_KPI.co2ReductionTrend}
-            trendLabel="vs año ant."
-            icon={<Leaf className="h-4 w-4" />}
-            valueClassName="text-accent-green"
-          />
-          <KPICard
-            title="Utilización Flota"
-            value={`${MOCK_KPI.fleetUtilization}%`}
-            trend={MOCK_KPI.fleetUtilizationTrend}
-            trendLabel="vs semana ant."
-            icon={<Gauge className="h-4 w-4" />}
-          />
-        </div>
+        <KPICard
+          title="CO₂ Reducido"
+          value={`${formatNumber(MOCK_KPI.co2ReductionTons)} ton`}
+          trend={MOCK_KPI.co2ReductionTrend}
+          trendLabel="vs año ant."
+          icon={<Leaf className="h-4 w-4" />}
+          valueClassName="text-accent-green"
+        />
+        <KPICard
+          title="Utilización Flota"
+          value={`${MOCK_KPI.fleetUtilization}%`}
+          trend={MOCK_KPI.fleetUtilizationTrend}
+          trendLabel="vs semana ant."
+          icon={<Gauge className="h-4 w-4" />}
+        />
       </div>
 
       {/* Stats rápidas */}
@@ -284,7 +284,6 @@ export default function DashboardPage() {
               </CardTitle>
               <p className="text-xs text-text-muted mt-0.5">Proyección ejecutiva para toma de decisiones estratégicas</p>
             </div>
-            <Badge variant="default" className="text-xs">Director General</Badge>
           </div>
         </CardHeader>
         <CardContent className="px-4 pb-4 space-y-4">
