@@ -1,7 +1,8 @@
 "use client";
 
-import { TrendingUp, Fuel, Leaf, Gauge, Bus, Route, Users } from "lucide-react";
+import { Fuel, Leaf, Gauge, Bus, Route, Users } from "lucide-react";
 import { KPICard } from "@/components/shared/kpi-card";
+import { ROIComparisonCard } from "@/components/shared/roi-comparison-card";
 import { ChartWrapper } from "@/components/charts/chart-wrapper";
 import { BarChart } from "@/components/charts/bar-chart";
 import { DoughnutChart } from "@/components/charts/doughnut-chart";
@@ -9,7 +10,7 @@ import { LineChart } from "@/components/charts/line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatNumber, formatCurrency } from "@/lib/utils";
-import { MOCK_KPI, ROUTE_AGENCY_COUNT, MOCK_FLEET } from "@/constants/mock-data";
+import { MOCK_KPI, MOCK_ROI_MONTHLY, ROUTE_AGENCY_COUNT, MOCK_FLEET } from "@/constants/mock-data";
 import { BUS_MODELS } from "@/constants/bus-models";
 
 export default function DashboardPage() {
@@ -79,36 +80,36 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard
-          title="ROI Anual"
-          value={`${MOCK_KPI.roi}%`}
-          trend={MOCK_KPI.roiTrend}
-          trendLabel="vs año anterior"
-          icon={<TrendingUp className="h-5 w-5" />}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <ROIComparisonCard
+          roiActual={MOCK_KPI.roi}
+          roiEstimated={MOCK_KPI.roiEstimated}
+          monthlyData={MOCK_ROI_MONTHLY}
         />
-        <KPICard
-          title="Ahorro en Combustible"
-          value={formatCurrency(MOCK_KPI.fuelSavingsMXN)}
-          trend={MOCK_KPI.fuelSavingsTrend}
-          trendLabel="vs mes anterior"
-          icon={<Fuel className="h-5 w-5" />}
-        />
-        <KPICard
-          title="CO₂ Reducido"
-          value={`${formatNumber(MOCK_KPI.co2ReductionTons)} ton`}
-          trend={MOCK_KPI.co2ReductionTrend}
-          trendLabel="vs año anterior"
-          icon={<Leaf className="h-5 w-5" />}
-          valueClassName="text-accent-green"
-        />
-        <KPICard
-          title="Utilización Flota"
-          value={`${MOCK_KPI.fleetUtilization}%`}
-          trend={MOCK_KPI.fleetUtilizationTrend}
-          trendLabel="vs semana anterior"
-          icon={<Gauge className="h-5 w-5" />}
-        />
+        <div className="grid gap-4 md:grid-cols-3 lg:col-span-2">
+          <KPICard
+            title="Ahorro en Combustible"
+            value={formatCurrency(MOCK_KPI.fuelSavingsMXN)}
+            trend={MOCK_KPI.fuelSavingsTrend}
+            trendLabel="vs mes anterior"
+            icon={<Fuel className="h-5 w-5" />}
+          />
+          <KPICard
+            title="CO₂ Reducido"
+            value={`${formatNumber(MOCK_KPI.co2ReductionTons)} ton`}
+            trend={MOCK_KPI.co2ReductionTrend}
+            trendLabel="vs año anterior"
+            icon={<Leaf className="h-5 w-5" />}
+            valueClassName="text-accent-green"
+          />
+          <KPICard
+            title="Utilización Flota"
+            value={`${MOCK_KPI.fleetUtilization}%`}
+            trend={MOCK_KPI.fleetUtilizationTrend}
+            trendLabel="vs semana anterior"
+            icon={<Gauge className="h-5 w-5" />}
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
