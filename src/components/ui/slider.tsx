@@ -3,17 +3,18 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface SliderProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  value?: number;
-  onValueChange?: (value: number) => void;
+interface SliderProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
+  value?: number[];
+  onValueChange?: (value: number[]) => void;
   min?: number;
   max?: number;
   step?: number;
 }
 
 const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
-  ({ className, value = 0, onValueChange, min = 0, max = 100, step = 1, ...props }, ref) => {
-    const percentage = ((value - min) / (max - min)) * 100;
+  ({ className, value = [0], onValueChange, min = 0, max = 100, step = 1, ...props }, ref) => {
+    const currentValue = value[0];
+    const percentage = ((currentValue - min) / (max - min)) * 100;
 
     return (
       <div className={cn("relative flex w-full touch-none select-none items-center", className)}>
@@ -26,11 +27,11 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
         <input
           ref={ref}
           type="range"
-          value={value}
+          value={currentValue}
           min={min}
           max={max}
           step={step}
-          onChange={(e) => onValueChange?.(Number(e.target.value))}
+          onChange={(e) => onValueChange?.([Number(e.target.value)])}
           className="absolute w-full h-full opacity-0 cursor-pointer"
           {...props}
         />

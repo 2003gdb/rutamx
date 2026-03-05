@@ -12,9 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartWrapper } from "@/components/charts/chart-wrapper";
 import { BarChart } from "@/components/charts/bar-chart";
 import { LineChart } from "@/components/charts/line-chart";
+import { BusCarousel3D } from "@/components/fleet/bus-carousel-3d";
 import { BUS_MODELS } from "@/constants/bus-models";
 import { MOCK_FLEET, MOCK_SERVICE_FREQUENCY } from "@/constants/mock-data";
 import { formatNumber, formatCurrency } from "@/lib/utils";
@@ -153,70 +155,83 @@ export default function FleetPage() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">
-            Comparación de Modelos de Bus
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Modelo</TableHead>
-                  <TableHead>Fabricante</TableHead>
-                  <TableHead className="text-right">Rango</TableHead>
-                  <TableHead className="text-right">Batería</TableHead>
-                  <TableHead className="text-right">Consumo</TableHead>
-                  <TableHead className="text-right">Capacidad</TableHead>
-                  <TableHead className="text-right">Costo</TableHead>
-                  <TableHead className="text-right">Garantía</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {BUS_MODELS.map((bus) => (
-                  <TableRow
-                    key={bus.id}
-                    className={cn(
-                      "cursor-pointer",
-                      selectedBusId === bus.id && "bg-primary/10"
-                    )}
-                    onClick={() =>
-                      setSelectedBusId(
-                        selectedBusId === bus.id ? null : bus.id
-                      )
-                    }
-                  >
-                    <TableCell className="font-medium">
-                      {bus.modelName}
-                    </TableCell>
-                    <TableCell>{bus.manufacturer}</TableCell>
-                    <TableCell className="text-right">
-                      {formatNumber(bus.rangeKm)} km
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {formatNumber(bus.batteryCapacityKwh)} kWh
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {bus.energyConsumptionKwhPerKm} kWh/km
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {bus.passengerCapacity} pas.
-                    </TableCell>
-                    <TableCell className="text-right">
-                      ${formatNumber(bus.unitCostUsd / 1000)}K
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Badge variant="outline">{bus.warrantyYears} años</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="3d-view">
+        <TabsList>
+          <TabsTrigger value="3d-view">Vista 3D</TabsTrigger>
+          <TabsTrigger value="comparison">Comparación</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="3d-view">
+          <BusCarousel3D />
+        </TabsContent>
+
+        <TabsContent value="comparison">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                Comparación de Modelos de Bus
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Modelo</TableHead>
+                      <TableHead>Fabricante</TableHead>
+                      <TableHead className="text-right">Rango</TableHead>
+                      <TableHead className="text-right">Batería</TableHead>
+                      <TableHead className="text-right">Consumo</TableHead>
+                      <TableHead className="text-right">Capacidad</TableHead>
+                      <TableHead className="text-right">Costo</TableHead>
+                      <TableHead className="text-right">Garantía</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {BUS_MODELS.map((bus) => (
+                      <TableRow
+                        key={bus.id}
+                        className={cn(
+                          "cursor-pointer",
+                          selectedBusId === bus.id && "bg-primary/10"
+                        )}
+                        onClick={() =>
+                          setSelectedBusId(
+                            selectedBusId === bus.id ? null : bus.id
+                          )
+                        }
+                      >
+                        <TableCell className="font-medium">
+                          {bus.modelName}
+                        </TableCell>
+                        <TableCell>{bus.manufacturer}</TableCell>
+                        <TableCell className="text-right">
+                          {formatNumber(bus.rangeKm)} km
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatNumber(bus.batteryCapacityKwh)} kWh
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {bus.energyConsumptionKwhPerKm} kWh/km
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {bus.passengerCapacity} pas.
+                        </TableCell>
+                        <TableCell className="text-right">
+                          ${formatNumber(bus.unitCostUsd / 1000)}K
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge variant="outline">{bus.warrantyYears} años</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {selectedBus && (
         <Card className="border-primary/50">

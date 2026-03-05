@@ -88,8 +88,8 @@ export function BatterySimulator({ selectedRoute }: BatterySimulatorProps) {
             <span className="text-sm font-medium">{occupancy}%</span>
           </div>
           <Slider
-            value={occupancy}
-            onValueChange={setOccupancy}
+            value={[occupancy]}
+            onValueChange={(value) => setOccupancy(value[0])}
             min={0}
             max={100}
             step={5}
