@@ -10,6 +10,8 @@ import {
   FileText,
   TreePine,
   Car,
+  Bus,
+  Zap,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,12 +24,32 @@ import {
   MOCK_EMISSIONS,
   MOCK_PASSENGERS,
   MOCK_CORRIDORS,
+  MOCK_ROUTES,
 } from "@/constants/mock-data";
 import { formatNumber } from "@/lib/utils";
 import {
   calculateTreeEquivalent,
   calculateCarEquivalent,
 } from "@/lib/calculations/emissions";
+
+// Datos por ruta
+const DIESEL_LITERS_PER_KM = 0.35;
+const DIESEL_PRICE_MXN = 24;
+const PRICE_PER_KWH_MXN = 2.8;
+const CO2_KG_PER_LITER = 2.68;
+const DAILY_TRIPS = 10;
+const OPERATING_DAYS = 310;
+const AVG_KWH_PER_KM = 1.4;
+
+const ROUTE_PASSENGERS: Record<string, { weekday: number; weekend: number }> = {
+  "mb-1":       { weekday: 105000, weekend: 62000 },
+  "mb-2":       { weekday: 80000,  weekend: 48000 },
+  "mb-3":       { weekday: 75000,  weekend: 44000 },
+  "metro-1":    { weekday: 320000, weekend: 195000 },
+  "trolebus-1": { weekday: 58000,  weekend: 31000 },
+  "cablebus-1": { weekday: 32000,  weekend: 21000 },
+  "rtp-1":      { weekday: 42000,  weekend: 24000 },
+};
 
 export default function ReportsPage() {
   const [pdfReady, setPdfReady] = useState(false);
@@ -283,6 +305,91 @@ export default function ReportsPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Tablero por Ruta ── */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Bus className="h-5 w-5 text-primary-light" />
+            Tablero por Ruta — Pasajeros · CO₂ · Semana vs Fin de Semana
+          </CardTitle>
+          <p className="text-sm text-text-secondary">Comparativa eléctrico vs diésel equivalente por línea de transporte</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {MOCK_ROUTES.map((route) => {
+              const pax = ROUTE_PASSENGERS[route.id] ?? { weekday: 0, weekend: 0 };
+              const totalDailyAvg = Math.round((pax.weekday * 5 + pax.weekend * 2) / 7);
+              const busesSim = Math.round(totalDailyAvg / 80);
+              const kmYear = busesSim * route.distanceKm * DAILY_TRIPS * OPERATING_DAYS;
+              const co2Avoided = Math.round(kmYear * DIESEL_LITERS_PER_KM * CO2_KG_PER_LITER / 1000);
+              const dieselCost = Math.round(kmYear * DIESEL_LITERS_PER_KM * DIESEL_PRICE_MXN / 1_000_000);
+              const electricCost = Math.round(kmYear * AVG_KWH_PER_KM * PRICE_PER_KWH_MXN / 1_000_000);
+              const saving = dieselCost - electricCost;
+              const agencyColor: Record<string, string> = {
+                metrobus: "#DC2626", metro: "#F97316", trolebus: "#3B82F6",
+                cablebus: "#8B5CF6", rtp: "#22C55E",
+              };
+              return (
+                <div key={route.id} className="p-3 rounded-lg border border-border/50 bg-surface-light space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: agencyColor[route.agency] ?? "#64748B" }} />
+                      <span className="text-sm font-bold">{route.shortName}</span>
+                    </div>
+                    <span className="text-xs text-text-muted capitalize">{route.agency}</span>
+                  </div>
+                  <p className="text-xs text-text-muted leading-tight">{route.name.split(" - ").slice(-1)[0]} · {route.distanceKm} km</p>
+
+                  {/* Pasajeros entre semana vs fin de semana */}
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-text-secondary flex items-center gap-1">
+                      <Users className="h-3 w-3" /> Pasajeros / día
+                    </p>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-text-muted">Entre semana</span>
+                      <span className="font-medium">{pax.weekday >= 1000 ? `${(pax.weekday/1000).toFixed(0)}K` : pax.weekday}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-text-muted">Fin de semana</span>
+                      <span className="font-medium">{pax.weekend >= 1000 ? `${(pax.weekend/1000).toFixed(0)}K` : pax.weekend}</span>
+                    </div>
+                    {/* Barra proporcional */}
+                    <div className="h-1.5 w-full bg-border/30 rounded-full overflow-hidden mt-1">
+                      <div className="h-full rounded-full bg-primary-light/70"
+                        style={{ width: `${Math.round((pax.weekend / pax.weekday) * 100)}%` }} />
+                    </div>
+                    <p className="text-xs text-text-muted">{Math.round((pax.weekend / pax.weekday) * 100)}% demanda fin de semana vs entre semana</p>
+                  </div>
+
+                  {/* CO₂ y costo */}
+                  <div className="space-y-1 border-t border-border/30 pt-2">
+                    <p className="text-xs font-medium text-text-secondary flex items-center gap-1">
+                      <Leaf className="h-3 w-3 text-accent-green" /> CO₂ evitado vs diésel
+                    </p>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-text-muted">CO₂ evitado/año</span>
+                      <span className="font-medium text-accent-green">{co2Avoided.toLocaleString("es-MX")} ton</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-text-muted flex items-center gap-0.5"><Zap className="h-3 w-3" />Costo eléctrico/año</span>
+                      <span className="font-medium text-primary-light">${electricCost}M</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-text-muted">Costo diésel equiv.</span>
+                      <span className="font-medium text-accent-red">${dieselCost}M</span>
+                    </div>
+                    <div className="flex justify-between text-xs border-t border-border/30 pt-1">
+                      <span className="text-text-muted font-medium">Ahorro/año</span>
+                      <span className="font-bold text-accent-green">${saving}M MXN</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
