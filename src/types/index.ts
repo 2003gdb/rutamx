@@ -159,6 +159,44 @@ export interface BatterySimulation {
   canCompleteRoute: boolean;
 }
 
+// Demand / COO / CMO Types
+export type DayType = 'weekday' | 'saturday' | 'sunday';
+
+export interface LineDemandStat {
+  lineId: string;
+  name: string;
+  color: string;
+  avgWeekday: number;
+  avgSaturday: number;
+  avgSunday: number;
+  avgOverall: number;
+  dataQuality: 'high' | 'medium' | 'low';
+}
+
+export interface BusCountRecommendation {
+  recommendedBuses: number;
+  peakHourDemand: number;
+  targetOccupancy: number;
+}
+
+export interface ModelRecommendation {
+  model: ElectricBusModel;
+  requiredCapacity: number;
+  isRecommended: boolean;
+}
+
+export interface CorridorCampaign {
+  lineId: string;
+  name: string;
+  color: string;
+  totalWeeklyTrips: number;
+  peakDay: string;
+  peakTrips: number;
+  co2TonsPerYear: number;
+  campaignScore: number;
+  priority: 'high' | 'medium' | 'low';
+}
+
 // Chart Data Types
 export interface ChartDataPoint {
   label: string;

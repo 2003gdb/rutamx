@@ -12,18 +12,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChartWrapper } from "@/components/charts/chart-wrapper";
 import { BarChart } from "@/components/charts/bar-chart";
 import { LineChart } from "@/components/charts/line-chart";
 import { BusCarousel3D } from "@/components/fleet/bus-carousel-3d";
 import { BUS_MODELS } from "@/constants/bus-models";
-import { MOCK_FLEET, MOCK_SERVICE_FREQUENCY } from "@/constants/mock-data";
+import { MOCK_FLEET, MOCK_SERVICE_FREQUENCY, MOCK_ROUTES } from "@/constants/mock-data";
 import { formatNumber, formatCurrency } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export default function FleetPage() {
   const [selectedBusId, setSelectedBusId] = useState<string | null>(null);
+  const [selectedRouteId, setSelectedRouteId] = useState(MOCK_ROUTES[0].id);
+
+  const selectedRoute = MOCK_ROUTES.find((r) => r.id === selectedRouteId) || MOCK_ROUTES[0];
+
+  // Calcular velocidad promedio: distancia / tiempo
+  const avgSpeedKmH = selectedRoute.distanceKm / (selectedRoute.estimatedTimeMinutes / 60);
+
+  // Datos de tiempos recorrido por ruta
+  const travelTimeData = {
+    labels: MOCK_ROUTES.map((r) => r.shortName),
+    datasets: [
+      {
+        label: "Tiempo Estimado (min)",
+        data: MOCK_ROUTES.map((r) => r.estimatedTimeMinutes),
+        borderColor: "#3B82F6",
+        backgroundColor: "rgba(59, 130, 246, 0.1)",
+        fill: true,
+      },
+      {
+        label: "Tiempo Programado (min)",
+        data: MOCK_ROUTES.map((r) => Math.round(r.estimatedTimeMinutes * (1 + Math.random() * 0.15))),
+        borderColor: "#22C55E",
+        backgroundColor: "rgba(34, 197, 94, 0.1)",
+        fill: true,
+      },
+    ],
+  };
 
   const comparisonData = {
     labels: BUS_MODELS.map((b) => `${b.manufacturer} ${b.modelName}`),
@@ -43,26 +69,6 @@ export default function FleetPage() {
         label: "Capacidad de Pasajeros",
         data: BUS_MODELS.map((b) => b.passengerCapacity),
         backgroundColor: "#22C55E",
-      },
-    ],
-  };
-
-  const demandData = {
-    labels: MOCK_SERVICE_FREQUENCY.map((s) => s.timeSlot.split("-")[0]),
-    datasets: [
-      {
-        label: "Programados",
-        data: MOCK_SERVICE_FREQUENCY.map((s) => s.scheduled),
-        borderColor: "#3B82F6",
-        backgroundColor: "rgba(59, 130, 246, 0.1)",
-        fill: true,
-      },
-      {
-        label: "Reales",
-        data: MOCK_SERVICE_FREQUENCY.map((s) => s.actual),
-        borderColor: "#22C55E",
-        backgroundColor: "rgba(34, 197, 94, 0.1)",
-        fill: true,
       },
     ],
   };
@@ -155,83 +161,72 @@ export default function FleetPage() {
         </Card>
       </div>
 
-      <Tabs defaultValue="3d-view">
-        <TabsList>
-          <TabsTrigger value="3d-view">Vista 3D</TabsTrigger>
-          <TabsTrigger value="comparison">Comparación</TabsTrigger>
-        </TabsList>
+      <BusCarousel3D />
 
-        <TabsContent value="3d-view">
-          <BusCarousel3D />
-        </TabsContent>
-
-        <TabsContent value="comparison">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
-                Comparación de Modelos de Bus
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Modelo</TableHead>
-                      <TableHead>Fabricante</TableHead>
-                      <TableHead className="text-right">Rango</TableHead>
-                      <TableHead className="text-right">Batería</TableHead>
-                      <TableHead className="text-right">Consumo</TableHead>
-                      <TableHead className="text-right">Capacidad</TableHead>
-                      <TableHead className="text-right">Costo</TableHead>
-                      <TableHead className="text-right">Garantía</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {BUS_MODELS.map((bus) => (
-                      <TableRow
-                        key={bus.id}
-                        className={cn(
-                          "cursor-pointer",
-                          selectedBusId === bus.id && "bg-primary/10"
-                        )}
-                        onClick={() =>
-                          setSelectedBusId(
-                            selectedBusId === bus.id ? null : bus.id
-                          )
-                        }
-                      >
-                        <TableCell className="font-medium">
-                          {bus.modelName}
-                        </TableCell>
-                        <TableCell>{bus.manufacturer}</TableCell>
-                        <TableCell className="text-right">
-                          {formatNumber(bus.rangeKm)} km
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatNumber(bus.batteryCapacityKwh)} kWh
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {bus.energyConsumptionKwhPerKm} kWh/km
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {bus.passengerCapacity} pas.
-                        </TableCell>
-                        <TableCell className="text-right">
-                          ${formatNumber(bus.unitCostUsd / 1000)}K
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Badge variant="outline">{bus.warrantyYears} años</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">
+            Comparación de Modelos de Bus
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Modelo</TableHead>
+                  <TableHead>Fabricante</TableHead>
+                  <TableHead className="text-right">Rango</TableHead>
+                  <TableHead className="text-right">Batería</TableHead>
+                  <TableHead className="text-right">Consumo</TableHead>
+                  <TableHead className="text-right">Capacidad</TableHead>
+                  <TableHead className="text-right">Costo</TableHead>
+                  <TableHead className="text-right">Garantía</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {BUS_MODELS.map((bus) => (
+                  <TableRow
+                    key={bus.id}
+                    className={cn(
+                      "cursor-pointer",
+                      selectedBusId === bus.id && "bg-primary/10"
+                    )}
+                    onClick={() =>
+                      setSelectedBusId(
+                        selectedBusId === bus.id ? null : bus.id
+                      )
+                    }
+                  >
+                    <TableCell className="font-medium">
+                      {bus.modelName}
+                    </TableCell>
+                    <TableCell>{bus.manufacturer}</TableCell>
+                    <TableCell className="text-right">
+                      {formatNumber(bus.rangeKm)} km
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {formatNumber(bus.batteryCapacityKwh)} kWh
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {bus.energyConsumptionKwhPerKm} kWh/km
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {bus.passengerCapacity} pas.
+                    </TableCell>
+                    <TableCell className="text-right">
+                      ${formatNumber(bus.unitCostUsd / 1000)}K
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge variant="outline">{bus.warrantyYears} años</Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
       {selectedBus && (
         <Card className="border-primary/50">
@@ -296,12 +291,90 @@ export default function FleetPage() {
         </ChartWrapper>
       </div>
 
-      <ChartWrapper
-        title="Demanda vs Capacidad"
-        description="Buses programados vs reales por franja horaria"
-      >
-        <LineChart data={demandData} />
-      </ChartWrapper>
+      <Card className="border-primary/20">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">Tiempos de Recorrido por Ruta</CardTitle>
+              <p className="text-xs text-text-muted mt-1">Estimados vs Programados · Detección de Variabilidad Operativa</p>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Selector de ruta */}
+          <div className="flex gap-3">
+            <select
+              value={selectedRouteId}
+              onChange={(e) => setSelectedRouteId(e.target.value)}
+              className="flex-1 text-sm bg-surface-light border border-border rounded-lg px-3 py-2 text-foreground"
+            >
+              {MOCK_ROUTES.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.shortName} — {r.name.split(" - ")[0]}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* KPIs de la ruta seleccionada */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xs text-text-muted">Distancia</p>
+              <p className="text-base font-bold text-primary-light">{selectedRoute.distanceKm} km</p>
+            </div>
+            <div className="p-3 rounded-lg bg-accent-green/5 border border-accent-green/20">
+              <p className="text-xs text-text-muted">Tiempo Estimado</p>
+              <p className="text-base font-bold text-accent-green">{selectedRoute.estimatedTimeMinutes} min</p>
+            </div>
+            <div className="p-3 rounded-lg bg-accent-yellow/5 border border-accent-yellow/20">
+              <p className="text-xs text-text-muted">Velocidad Promedio</p>
+              <p className="text-base font-bold text-accent-yellow">{avgSpeedKmH.toFixed(1)} km/h</p>
+            </div>
+            <div className="p-3 rounded-lg bg-accent-red/5 border border-accent-red/20">
+              <p className="text-xs text-text-muted">Frecuencia</p>
+              <p className="text-base font-bold text-accent-red">c/{selectedRoute.frequency} min</p>
+            </div>
+          </div>
+
+          {/* Gráfico de comparación */}
+          <ChartWrapper title="Tiempos Estimados vs Programados" description="Por ruta del sistema">
+            <LineChart data={travelTimeData} />
+          </ChartWrapper>
+
+          {/* Tabla detallada por ruta */}
+          <div className="overflow-x-auto border border-border rounded-lg">
+            <table className="w-full text-sm">
+              <thead className="bg-surface-light border-b border-border">
+                <tr>
+                  <th className="px-4 py-2 text-left text-text-secondary">Ruta</th>
+                  <th className="px-4 py-2 text-right text-text-secondary">Distancia</th>
+                  <th className="px-4 py-2 text-right text-text-secondary">Tiempo Est.</th>
+                  <th className="px-4 py-2 text-right text-text-secondary">Velocidad</th>
+                  <th className="px-4 py-2 text-right text-text-secondary">Variabilidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                {MOCK_ROUTES.map((route) => {
+                  const speed = route.distanceKm / (route.estimatedTimeMinutes / 60);
+                  const variability = Math.round(Math.random() * 20 - 10);
+                  const variabilityColor = variability > 5 ? "text-accent-red" : variability < -5 ? "text-accent-green" : "text-accent-yellow";
+                  return (
+                    <tr key={route.id} className="border-b border-border/50 hover:bg-surface-light transition-colors">
+                      <td className="px-4 py-3 font-medium">{route.shortName}</td>
+                      <td className="px-4 py-3 text-right">{route.distanceKm} km</td>
+                      <td className="px-4 py-3 text-right">{route.estimatedTimeMinutes} min</td>
+                      <td className="px-4 py-3 text-right">{speed.toFixed(1)} km/h</td>
+                      <td className={`px-4 py-3 text-right font-medium ${variabilityColor}`}>
+                        {variability > 0 ? "+" : ""}{variability}%
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

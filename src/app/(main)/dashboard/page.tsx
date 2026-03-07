@@ -1,17 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Fuel, Leaf, Gauge, Bus, Route, Users, TrendingUp, Zap } from "lucide-react";
+import { Fuel, Leaf, Bus, Route, Users, TrendingUp, Zap } from "lucide-react";
 import { KPICard } from "@/components/shared/kpi-card";
 import { ROIComparisonCard } from "@/components/shared/roi-comparison-card";
 import { ChartWrapper } from "@/components/charts/chart-wrapper";
 import { BarChart } from "@/components/charts/bar-chart";
-import { DoughnutChart } from "@/components/charts/doughnut-chart";
 import { LineChart } from "@/components/charts/line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { formatNumber, formatCurrency } from "@/lib/utils";
-import { MOCK_KPI, MOCK_ROI_MONTHLY, ROUTE_AGENCY_COUNT, MOCK_FLEET, MOCK_ROUTES } from "@/constants/mock-data";
+import { MOCK_KPI, ROUTE_AGENCY_COUNT, MOCK_ROUTES, MOCK_SERVICE_FREQUENCY, MOCK_PEAK_HOURS } from "@/constants/mock-data";
 import { BUS_MODELS } from "@/constants/bus-models";
 
 // Constantes para proyección de expansión
@@ -104,17 +102,6 @@ export default function DashboardPage() {
     : v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(1)}M MXN`
     : `$${Math.round(v).toLocaleString("es-MX")} MXN`;
 
-  const fleetStatusData = {
-    labels: ["Activos", "Cargando", "Mantenimiento", "Inactivos"],
-    datasets: [
-      {
-        data: [392, 35, 15, 8],
-        backgroundColor: ["#22C55E", "#3B82F6", "#F97316", "#64748B"],
-        borderWidth: 0,
-      },
-    ],
-  };
-
   const agencyRoutesData = {
     labels: ROUTE_AGENCY_COUNT.map((a) => a.agency),
     datasets: [
@@ -140,41 +127,46 @@ export default function DashboardPage() {
     ],
   };
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, "success" | "default" | "warning" | "secondary"> = {
-      active: "success",
-      charging: "default",
-      maintenance: "warning",
-      inactive: "secondary",
-    };
-    const labels: Record<string, string> = {
-      active: "Activo",
-      charging: "Cargando",
-      maintenance: "Mantto",
-      inactive: "Inactivo",
-    };
-    return <Badge variant={variants[status]}>{labels[status]}</Badge>;
+  const frequencyData = {
+    labels: MOCK_SERVICE_FREQUENCY.map((s) => s.timeSlot.split("-")[0]),
+    datasets: [
+      {
+        label: "Ocupación %",
+        data: MOCK_SERVICE_FREQUENCY.map((s) => s.occupancy),
+        borderColor: "#3B82F6",
+        backgroundColor: "rgba(59, 130, 246, 0.2)",
+        fill: true,
+      },
+    ],
   };
+
+  const peakHoursData = {
+    labels: MOCK_PEAK_HOURS.map((p) => `${p.hour}:00`),
+    datasets: [
+      {
+        label: "Buses Requeridos",
+        data: MOCK_PEAK_HOURS.map((p) => p.busesRequired),
+        backgroundColor: "#3B82F6",
+      },
+    ],
+  };
+
+  const peakHour = MOCK_PEAK_HOURS.reduce((max, p) =>
+    p.passengers > max.passengers ? p : max
+  );
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold">Dashboard</h1>
-          <p className="text-xs text-text-secondary">Visión general del sistema de transporte eléctrico</p>
-        </div>
-        <p className="text-xs text-text-muted">Actualizado: {new Date().toLocaleTimeString("es-MX")}</p>
+      <div>
+        <h1 className="text-xl font-bold">Dashboard</h1>
+        <p className="text-xs text-text-secondary">Visión general del sistema de transporte eléctrico</p>
       </div>
 
       {/* ROI Card - Full Width */}
-      <ROIComparisonCard
-        roiActual={MOCK_KPI.roi}
-        roiEstimated={MOCK_KPI.roiEstimated}
-        monthlyData={MOCK_ROI_MONTHLY}
-      />
+      <ROIComparisonCard />
 
       {/* KPIs */}
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-2">
         <KPICard
           title="Ahorro Combustible"
           value={formatCurrency(MOCK_KPI.fuelSavingsMXN)}
@@ -190,21 +182,15 @@ export default function DashboardPage() {
           icon={<Leaf className="h-4 w-4" />}
           valueClassName="text-accent-green"
         />
-        <KPICard
-          title="Utilización Flota"
-          value={`${MOCK_KPI.fleetUtilization}%`}
-          trend={MOCK_KPI.fleetUtilizationTrend}
-          trendLabel="vs semana ant."
-          icon={<Gauge className="h-4 w-4" />}
-        />
       </div>
 
       {/* Stats rápidas */}
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-4">
         {[
-          { icon: Bus, label: "Total Buses", value: MOCK_KPI.totalBuses, sub: `${MOCK_KPI.activeBuses} activos` },
+          { icon: Bus, label: "Total Buses", value: MOCK_KPI.totalBuses, sub: "en la flota" },
           { icon: Route, label: "Rutas Activas", value: MOCK_KPI.totalRoutes, sub: "5 agencias" },
           { icon: Users, label: "Pasajeros Diarios", value: `${formatNumber(MOCK_KPI.totalPassengersDaily / 1000)}K`, sub: "promedio" },
+          { icon: TrendingUp, label: "Hora Pico", value: `${peakHour.hour}:00`, sub: `${formatNumber(peakHour.passengers)} pas.` },
         ].map(({ icon: Icon, label, value, sub }) => (
           <Card key={label}>
             <CardContent className="p-4">
@@ -223,55 +209,25 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Gráficas + Buses recientes */}
-      <div className="grid gap-3 lg:grid-cols-3">
+      {/* Gráficas */}
+      <div className="grid gap-3 lg:grid-cols-2">
         <ChartWrapper title="Rutas por Agencia" description="Por sistema de transporte">
           <BarChart data={agencyRoutesData} />
         </ChartWrapper>
-
-        <ChartWrapper title="Estado de la Flota" description="Buses por estado">
-          <DoughnutChart data={fleetStatusData} centerText={`${MOCK_KPI.totalBuses}`} />
+        <ChartWrapper title="Tendencia de Pasajeros" description="Última semana (miles)">
+          <LineChart data={passengerTrendData} />
         </ChartWrapper>
-
-        <Card>
-          <CardHeader className="pb-2 pt-4 px-4">
-            <CardTitle className="text-sm">Buses Recientes</CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 pb-4">
-            <div className="space-y-2">
-              {MOCK_FLEET.slice(0, 5).map((bus) => {
-                const model = BUS_MODELS.find((m) => m.id === bus.modelId);
-                return (
-                  <div key={bus.id} className="flex items-center justify-between p-2 rounded-md bg-surface-light/50">
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 items-center justify-center rounded bg-primary/10">
-                        <Bus className="h-4 w-4 text-primary-light" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium">{bus.id.toUpperCase()}</p>
-                        <p className="text-xs text-text-muted">{model?.manufacturer} {model?.modelName}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs font-medium ${
-                        bus.currentBatteryPercent > 50 ? "text-accent-green"
-                        : bus.currentBatteryPercent > 20 ? "text-accent-yellow"
-                        : "text-accent-red"
-                      }`}>{bus.currentBatteryPercent}%</span>
-                      {getStatusBadge(bus.status)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Tendencia pasajeros */}
-      <ChartWrapper title="Tendencia de Pasajeros" description="Última semana (miles)">
-        <LineChart data={passengerTrendData} />
-      </ChartWrapper>
+      {/* Operaciones */}
+      <div className="grid gap-3 lg:grid-cols-2">
+        <ChartWrapper title="Ocupación por Franja Horaria" description="Porcentaje de ocupación promedio">
+          <LineChart data={frequencyData} />
+        </ChartWrapper>
+        <ChartWrapper title="Demanda de Buses por Hora" description="Buses requeridos por franja horaria">
+          <BarChart data={peakHoursData} />
+        </ChartWrapper>
+      </div>
 
       {/* ── Escenario de Expansión de Flota ── */}
       <Card className="border-primary/20">
