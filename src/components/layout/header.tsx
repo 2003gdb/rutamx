@@ -66,7 +66,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-4">
-          <DropdownMenu open>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 className="relative h-10 w-10 rounded-full"
