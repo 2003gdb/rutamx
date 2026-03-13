@@ -61,9 +61,11 @@ export default function AdminLayout({
                   <User />
                   Perfil
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings />
-                  Configuración
+                <DropdownMenuItem asChild>
+                  <Link href="/configuracion">
+                    <Settings />
+                    Configuración
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive">
