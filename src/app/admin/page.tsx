@@ -11,8 +11,6 @@ import {
   Trash2,
   Ban,
   CheckCircle,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,19 +25,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { MOCK_USERS } from "@/constants/mock-data";
 import { BUS_MODELS } from "@/constants/bus-models";
 import { formatNumber, formatCurrency } from "@/lib/utils";
 import { User, ElectricBusModel } from "@/types";
 import { BusModelDialog } from "./_components/bus-model-dialog";
+import { UserDialog } from "./_components/user-dialog";
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>(MOCK_USERS);
@@ -47,19 +38,13 @@ export default function AdminPage() {
   const [searchUsers, setSearchUsers] = useState("");
   const [searchBuses, setSearchBuses] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isNewUser, setIsNewUser] = useState(false);
   const [selectedBus, setSelectedBus] = useState<ElectricBusModel | null>(null);
   const [isNewBus, setIsNewBus] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleCloseDialog = () => {
+  const handleCloseUserDialog = () => {
     setSelectedUser(null);
-    setNewPassword("");
-    setConfirmPassword("");
-    setShowPassword(false);
-    setShowConfirmPassword(false);
+    setIsNewUser(false);
   };
 
   const filteredUsers = users.filter(
@@ -67,6 +52,18 @@ export default function AdminPage() {
       user.name.toLowerCase().includes(searchUsers.toLowerCase()) ||
       user.email.toLowerCase().includes(searchUsers.toLowerCase())
   );
+
+  const handleSaveUser = (data: User) => {
+    setUsers((prev) =>
+      isNewUser ? [...prev, data] : prev.map((u) => (u.id === data.id ? data : u))
+    );
+    handleCloseUserDialog();
+  };
+
+  const handleDeleteUser = (id: string) => {
+    if (!confirm("¿Eliminar este usuario?")) return;
+    setUsers((prev) => prev.filter((u) => u.id !== id));
+  };
 
   const handleSaveBus = (data: ElectricBusModel) => {
     setBuses((prev) =>
@@ -174,7 +171,7 @@ export default function AdminPage() {
                 <Download className="h-4 w-4" />
                 Exportar CSV
               </Button>
-              <Button className="gap-2">
+              <Button className="gap-2" onClick={() => { setSelectedUser(null); setIsNewUser(true); }}>
                 <Plus className="h-4 w-4" />
                 Nuevo Usuario
               </Button>
@@ -207,7 +204,7 @@ export default function AdminPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => setSelectedUser(user)}
+                            onClick={() => { setIsNewUser(false); setSelectedUser(user); }}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -222,7 +219,11 @@ export default function AdminPage() {
                               <CheckCircle className="h-4 w-4 text-accent-green" />
                             )}
                           </Button>
-                          <Button variant="ghost" size="icon">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteUser(user.id)}
+                          >
                             <Trash2 className="h-4 w-4 text-accent-red" />
                           </Button>
                         </div>
@@ -349,90 +350,12 @@ export default function AdminPage() {
         onSave={handleSaveBus}
       />
 
-      {selectedUser && (
-        <Dialog open={!!selectedUser} onOpenChange={handleCloseDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Editar Usuario</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div>
-                <label className="text-sm text-text-secondary">Nombre</label>
-                <Input defaultValue={selectedUser.name} />
-              </div>
-              <div>
-                <label className="text-sm text-text-secondary">Email</label>
-                <Input defaultValue={selectedUser.email} />
-              </div>
-              <div>
-                <label className="text-sm text-text-secondary">Rol</label>
-                <Input defaultValue={selectedUser.role} />
-              </div>
-              <div className="border-t border-border pt-4">
-                <p className="text-sm font-medium mb-3">Cambiar Contraseña</p>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-sm text-text-secondary">Nueva Contraseña</label>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="Dejar vacío para no cambiar"
-                        autoComplete="new-password"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm text-text-secondary">Confirmar Contraseña</label>
-                    <div className="relative">
-                      <Input
-                        type={showConfirmPassword ? "text" : "password"}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Repetir nueva contraseña"
-                        autoComplete="new-password"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                    {newPassword && confirmPassword && newPassword !== confirmPassword && (
-                      <p className="text-xs text-accent-red mt-1">Las contraseñas no coinciden</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={handleCloseDialog}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleCloseDialog}
-                disabled={!!(newPassword && confirmPassword && newPassword !== confirmPassword)}
-              >
-                Guardar Cambios
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+      <UserDialog
+        user={selectedUser}
+        isNew={isNewUser}
+        onClose={handleCloseUserDialog}
+        onSave={handleSaveUser}
+      />
     </div>
   );
 }
