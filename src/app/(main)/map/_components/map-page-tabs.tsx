@@ -11,9 +11,9 @@ export function MapPageTabs({ activeTab, onTabChange }: MapPageTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as "map" | "coo" | "cmo")}>
       <TabsList>
-        <TabsTrigger value="map">Mapa</TabsTrigger>
-        <TabsTrigger value="coo">Optimización</TabsTrigger>
-        <TabsTrigger value="cmo">Campañas</TabsTrigger>
+        <TabsTrigger value="map">Mapa de Rutas</TabsTrigger>
+        <TabsTrigger value="coo">Optimización de Flota</TabsTrigger>
+        <TabsTrigger value="cmo">Campañas Ambientales</TabsTrigger>
       </TabsList>
     </Tabs>
   );

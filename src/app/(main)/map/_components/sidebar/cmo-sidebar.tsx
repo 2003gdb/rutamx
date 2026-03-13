@@ -3,13 +3,6 @@
 import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   CORRIDOR_RANKING,
   LINE_DEMAND_STATS,
   LINE_WEEKLY_TRIPS,
@@ -56,31 +49,11 @@ export function CmoSidebar({ lineId, onLineIdChange }: CmoSidebarProps) {
     <div className="flex flex-col gap-3 p-3 overflow-y-auto h-full">
       {/* Header */}
       <div>
-        <h2 className="font-semibold text-sm text-foreground">CMO — Campañas Ambientales</h2>
+        <h2 className="font-semibold text-sm text-foreground">Campañas Ambientales</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
           Priorización de corredores para campañas de impacto ambiental
         </p>
       </div>
-
-      {/* Line selector */}
-      <Select value={lineId} onValueChange={onLineIdChange}>
-        <SelectTrigger className="h-8 text-xs">
-          <SelectValue placeholder="Seleccionar línea" />
-        </SelectTrigger>
-        <SelectContent>
-          {LINE_DEMAND_STATS.map((s) => (
-            <SelectItem key={s.lineId} value={s.lineId}>
-              <span className="flex items-center gap-2">
-                <span
-                  className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: s.color }}
-                />
-                {s.name}
-              </span>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
 
       {/* Detail panel for selected line */}
       {corridor && (
@@ -93,7 +66,7 @@ export function CmoSidebar({ lineId, onLineIdChange }: CmoSidebarProps) {
                 style={{ backgroundColor: lineStat.color }}
               />
               <span className="text-xs font-semibold text-foreground truncate">
-                {corridor.name}
+                {corridor.name.split(' - ')[0]}
               </span>
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -174,9 +147,14 @@ export function CmoSidebar({ lineId, onLineIdChange }: CmoSidebarProps) {
 
       {/* Global ranking — compact */}
       <div className="flex flex-col gap-1.5">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Ranking global — US3
-        </p>
+        <div className="flex flex-col gap-0.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Ranking de corredores
+          </p>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Ordenado por CO₂ evitado por km de ruta. Las líneas con mayor densidad de emisiones ahorradas son las de mayor prioridad para campañas ambientales.
+          </p>
+        </div>
         {CORRIDOR_RANKING.map((c, idx) => {
           const isSelected = c.lineId === lineId;
           return (
@@ -196,9 +174,9 @@ export function CmoSidebar({ lineId, onLineIdChange }: CmoSidebarProps) {
                 className="w-2 h-2 rounded-full flex-shrink-0"
                 style={{ backgroundColor: c.color }}
               />
-              <span className="text-xs text-foreground flex-1 truncate">{c.name}</span>
+              <span className="text-xs text-foreground flex-1 truncate">{c.name.split(' - ')[0]}</span>
               <span className="text-[9px] text-muted-foreground flex-shrink-0">
-                {(c.campaignScore * 100).toFixed(0)}
+                {(c.campaignScore * 100).toFixed(0)} pts
               </span>
               <Badge
                 variant={PRIORITY_VARIANTS[c.priority]}
@@ -214,8 +192,7 @@ export function CmoSidebar({ lineId, onLineIdChange }: CmoSidebarProps) {
       {/* Legend */}
       <div className="rounded-md bg-muted/30 p-2 mt-auto">
         <p className="text-[10px] text-muted-foreground leading-relaxed">
-          Score = 60% viajes semanales + 40% CO₂ evitado anual. Fuente: afluencia histórica
-          Metrobús 2005–2026.
+          Score = CO₂ evitado (t/año) ÷ km de ruta. Fuente: afluencia histórica Metrobús 2005–2026.
         </p>
       </div>
     </div>

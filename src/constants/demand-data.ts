@@ -1,9 +1,10 @@
 import { LineDemandStat, CorridorCampaign } from '@/types';
+import { MOCK_ROUTES } from './mock-data';
 
 export const LINE_DEMAND_STATS: LineDemandStat[] = [
   {
     lineId: 'mb-1',
-    name: 'Línea 1',
+    name: 'Línea 1 - Indios Verdes - El Caminero',
     color: '#DC2626',
     avgWeekday: 388000,
     avgSaturday: 231000,
@@ -13,7 +14,7 @@ export const LINE_DEMAND_STATS: LineDemandStat[] = [
   },
   {
     lineId: 'mb-2',
-    name: 'Línea 2',
+    name: 'Línea 2 - Tacubaya - Tepalcates',
     color: '#7C3AED',
     avgWeekday: 171000,
     avgSaturday: 101000,
@@ -23,7 +24,7 @@ export const LINE_DEMAND_STATS: LineDemandStat[] = [
   },
   {
     lineId: 'mb-3',
-    name: 'Línea 3',
+    name: 'Línea 3 - Tenayuca - Etiopía',
     color: '#059669',
     avgWeekday: 158000,
     avgSaturday: 93000,
@@ -33,7 +34,7 @@ export const LINE_DEMAND_STATS: LineDemandStat[] = [
   },
   {
     lineId: 'mb-4',
-    name: 'Línea 4',
+    name: 'Línea 4 - Terminal Aérea - General Anaya',
     color: '#D97706',
     avgWeekday: 74000,
     avgSaturday: 44000,
@@ -43,7 +44,7 @@ export const LINE_DEMAND_STATS: LineDemandStat[] = [
   },
   {
     lineId: 'mb-5',
-    name: 'Línea 5',
+    name: 'Línea 5 - Politécnico - Río de los Remedios',
     color: '#DB2777',
     avgWeekday: 145000,
     avgSaturday: 86000,
@@ -53,7 +54,7 @@ export const LINE_DEMAND_STATS: LineDemandStat[] = [
   },
   {
     lineId: 'mb-6',
-    name: 'Línea 6',
+    name: 'Línea 6 - El Rosario - Deportivo 18 de Marzo',
     color: '#0891B2',
     avgWeekday: 190000,
     avgSaturday: 113000,
@@ -63,7 +64,7 @@ export const LINE_DEMAND_STATS: LineDemandStat[] = [
   },
   {
     lineId: 'mb-7',
-    name: 'Línea 7',
+    name: 'Línea 7 - Indios Verdes - Buenavista',
     color: '#65A30D',
     avgWeekday: 134000,
     avgSaturday: 80000,
@@ -86,7 +87,6 @@ export const LINE_WEEKLY_TRIPS: Record<string, number[]> = {
 };
 
 const AVG_BUS_CAPACITY = 79;
-const KM_PER_TRIP = 15; // avg km per trip
 const CO2_PER_DIESEL_KM = 0.89; // kg CO2 per km (diesel bus)
 
 function computeCampaign(stat: LineDemandStat): CorridorCampaign {
@@ -94,9 +94,11 @@ function computeCampaign(stat: LineDemandStat): CorridorCampaign {
   const totalWeeklyTrips = weekly.reduce((a, b) => a + b, 0);
   const peakIdx = weekly.indexOf(Math.max(...weekly));
   const days = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  const route = MOCK_ROUTES.find(r => r.id === stat.lineId);
+  const routeKm = route?.distanceKm ?? 15;
   const annualPassengers = (stat.avgWeekday * 261 + stat.avgSaturday * 52 + stat.avgSunday * 52);
   const annualTrips = Math.round(annualPassengers / AVG_BUS_CAPACITY);
-  const co2TonsPerYear = Math.round((annualTrips * KM_PER_TRIP * CO2_PER_DIESEL_KM) / 1000);
+  const co2TonsPerYear = Math.round((annualTrips * routeKm * CO2_PER_DIESEL_KM) / 1000);
   return {
     lineId: stat.lineId,
     name: stat.name,
@@ -111,12 +113,16 @@ function computeCampaign(stat: LineDemandStat): CorridorCampaign {
 }
 
 const rawCampaigns = LINE_DEMAND_STATS.map(computeCampaign);
-const maxTrips = Math.max(...rawCampaigns.map(c => c.totalWeeklyTrips));
-const maxCO2 = Math.max(...rawCampaigns.map(c => c.co2TonsPerYear));
+const maxCO2PerKm = Math.max(...rawCampaigns.map(c => {
+  const route = MOCK_ROUTES.find(r => r.id === c.lineId);
+  return c.co2TonsPerYear / (route?.distanceKm ?? 15);
+}));
 
 export const CORRIDOR_RANKING: CorridorCampaign[] = rawCampaigns
   .map(c => {
-    const score = (c.totalWeeklyTrips / maxTrips) * 0.6 + (c.co2TonsPerYear / maxCO2) * 0.4;
+    const route = MOCK_ROUTES.find(r => r.id === c.lineId);
+    const co2PerKm = c.co2TonsPerYear / (route?.distanceKm ?? 15);
+    const score = co2PerKm / maxCO2PerKm;
     const priority: 'high' | 'medium' | 'low' = score >= 0.7 ? 'high' : score >= 0.4 ? 'medium' : 'low';
     return { ...c, campaignScore: Math.round(score * 100) / 100, priority };
   })
