@@ -41,13 +41,13 @@ export function KPICard({
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm text-text-secondary">{title}</p>
-            <p className={cn("text-3xl font-bold tracking-tight", valueClassName)}>
+            <p className={cn("text-3xl font-bold tracking-tight tabular-nums", valueClassName)}>
               {value}
             </p>
             {trend !== undefined && (
               <div className={cn("flex items-center gap-1 text-xs", getTrendColor())}>
                 {getTrendIcon()}
-                <span>
+                <span className="tabular-nums">
                   {trend > 0 ? "+" : ""}
                   {trend.toFixed(1)}%
                 </span>

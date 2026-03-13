@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/map", label: "Map", icon: Map },
-  { href: "/fleet", label: "Fleet", icon: Bus },
+  { href: "/dashboard", label: "Tablero", icon: LayoutDashboard },
+  { href: "/map", label: "Mapa", icon: Map },
+  { href: "/fleet", label: "Flota", icon: Bus },
+  { href: "/reports", label: "Reportes", icon: FileBarChart },
 ];
 
 export function Header() {
@@ -65,7 +66,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-4">
-          <DropdownMenu>
+          <DropdownMenu open>
             <DropdownMenuTrigger asChild>
               <Button
                 className="relative h-10 w-10 rounded-full"
@@ -79,9 +80,9 @@ export function Header() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-64 bg-background/05 backdrop-blur-md"
+              className="w-64 bg-background/50 backdrop-blur-md"
             >
-              <DropdownMenuLabel className="font-normal bg-background/05">
+              <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="font-medium text-sm leading-none">Usuario</p>
                   <p className="text-muted-foreground text-xs leading-none">

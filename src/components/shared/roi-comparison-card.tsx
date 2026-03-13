@@ -85,7 +85,7 @@ export function ROIComparisonCard({ className }: { className?: string }) {
               </div>
             )}
             {est && (
-              <p className="text-2xl font-bold tracking-tight mt-1">
+              <p className="text-2xl font-bold tracking-tight tabular-nums mt-1">
                 {est.roi.toFixed(1)}%
                 <span className="text-xs font-normal text-text-muted ml-2">ROI año 1</span>
               </p>
@@ -102,7 +102,7 @@ export function ROIComparisonCard({ className }: { className?: string }) {
                     style={{ width: `${(roi / maxROI) * 100}%` }}
                   />
                 </div>
-                <span className="text-xs text-right w-12 shrink-0 font-medium">
+                <span className="text-xs text-right w-12 shrink-0 font-medium tabular-nums">
                   {roi.toFixed(1)}%
                 </span>
               </div>
@@ -174,7 +174,7 @@ export function ROIComparisonCard({ className }: { className?: string }) {
                 <div className="grid grid-cols-1">                  
                   <div className="p-2 rounded-lg bg-surface-light">
                     <p className="text-xs text-text-muted">Recuperación</p>
-                    <p className="text-lg font-bold">{est.payback.toFixed(1)} años</p>
+                    <p className="text-lg font-bold tabular-nums">{est.payback.toFixed(1)} años</p>
                   </div>
                 </div>
 
@@ -182,21 +182,21 @@ export function ROIComparisonCard({ className }: { className?: string }) {
                   <p className="text-xs font-medium text-text-secondary">Costo operativo anual (eléctrico vs diésel)</p>
                   <div className="flex justify-between text-xs">
                     <span className="text-text-muted">Eléctrico</span>
-                    <span className="text-primary-light font-medium">{fmt(est.electricCostPerYear)}</span>
+                    <span className="text-primary-light font-medium tabular-nums">{fmt(est.electricCostPerYear)}</span>
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-text-muted">Diésel equiv.</span>
-                    <span className="text-accent-red font-medium">{fmt(est.dieselCostPerYear)}</span>
+                    <span className="text-accent-red font-medium tabular-nums">{fmt(est.dieselCostPerYear)}</span>
                   </div>
                   <div className="flex justify-between text-xs border-t border-border/30 pt-1">
                     <span className="text-text-muted font-medium">Ahorro total/año</span>
-                    <span className="text-accent-green font-bold">{fmt(est.netAnnualReturn)}</span>
+                    <span className="text-accent-green font-bold tabular-nums">{fmt(est.netAnnualReturn)}</span>
                   </div>
                 </div>
 
                 <div className="p-2 rounded-lg bg-accent-green/5 border border-accent-green/20">
                   <p className="text-xs text-text-muted">CO₂ evitado/año</p>
-                  <p className="text-sm font-bold text-accent-green">{Math.round(est.co2).toLocaleString("es-MX")} ton</p>
+                  <p className="text-sm font-bold text-accent-green tabular-nums">{Math.round(est.co2).toLocaleString("es-MX")} ton</p>
                 </div>
               </div>
             )}

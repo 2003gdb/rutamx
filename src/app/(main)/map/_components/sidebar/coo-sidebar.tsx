@@ -9,7 +9,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { LINE_DEMAND_STATS } from "@/constants/demand-data";
 import { MOCK_ROUTES } from "@/constants/mock-data";
@@ -72,7 +71,7 @@ export function CooSidebar({ lineId, onLineIdChange }: CooSidebarProps) {
     <div className="flex flex-col gap-3 p-3 overflow-y-auto h-full">
       {/* Header */}
       <div>
-        <h2 className="font-semibold text-sm text-foreground">COO — Optimización de Flota</h2>
+        <h2 className="font-semibold text-sm text-foreground">Optimización de Flota</h2>
         <p className="text-xs text-muted-foreground mt-0.5">
           Recomendaciones basadas en afluencia histórica 2005–2026
         </p>
@@ -82,7 +81,7 @@ export function CooSidebar({ lineId, onLineIdChange }: CooSidebarProps) {
       <div className="flex flex-col gap-2">
         <Select value={lineId} onValueChange={onLineIdChange}>
           <SelectTrigger className="h-8 text-xs">
-            <SelectValue placeholder="Seleccionar línea" />
+            <span>{LINE_DEMAND_STATS.find(s => s.lineId === lineId)?.name ?? 'Seleccionar línea'}</span>
           </SelectTrigger>
           <SelectContent>
             {LINE_DEMAND_STATS.map(s => (
@@ -101,7 +100,7 @@ export function CooSidebar({ lineId, onLineIdChange }: CooSidebarProps) {
 
         <Select value={dayType} onValueChange={v => setDayType(v as DayType)}>
           <SelectTrigger className="h-8 text-xs">
-            <SelectValue />
+            <span>{DAY_TYPES.find(d => d.value === dayType)?.label}</span>
           </SelectTrigger>
           <SelectContent>
             {DAY_TYPES.map(d => (
@@ -139,20 +138,20 @@ export function CooSidebar({ lineId, onLineIdChange }: CooSidebarProps) {
 
       {/* US1: Bus Count */}
       <div className="rounded-lg border border-border bg-surface p-3 flex flex-col gap-2">
-        <p className="text-xs font-semibold text-foreground">US1 — Buses recomendados</p>
+        <p className="text-xs font-semibold text-foreground">Buses recomendados</p>
 
         <div className="flex items-end gap-3">
           <div>
             <p className="text-3xl font-bold text-primary leading-none">
               {busCount.recommendedBuses}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">buses en hora pico</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">buses recomendados en hora pico</p>
           </div>
           <div className="text-right ml-auto">
             <p className="text-sm font-semibold text-foreground">
               {formatNumber(busCount.peakHourDemand)}
             </p>
-            <p className="text-[10px] text-muted-foreground">pax/hora pico</p>
+            <p className="text-[10px] text-muted-foreground">pasajeros/hora pico</p>
           </div>
         </div>
 
@@ -179,10 +178,10 @@ export function CooSidebar({ lineId, onLineIdChange }: CooSidebarProps) {
       {/* US2: Model Recommendation */}
       <div className="rounded-lg border border-border bg-surface p-3 flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold text-foreground">US2 — Modelo recomendado</p>
+          <p className="text-xs font-semibold text-foreground">Modelo recomendado</p>
           {recommendedModel && (
             <span className="text-[10px] text-muted-foreground">
-              Cap. mín: {recommendedModel.requiredCapacity} pax
+              Cap. mín: {recommendedModel.requiredCapacity} pas.
             </span>
           )}
         </div>
@@ -202,7 +201,7 @@ export function CooSidebar({ lineId, onLineIdChange }: CooSidebarProps) {
                   {model.manufacturer} {model.modelName}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
-                  {model.passengerCapacity} pax · {model.rangeKm} km
+                  {model.passengerCapacity} pas. · {model.rangeKm} km
                 </p>
               </div>
               <div className="text-right flex-shrink-0">
