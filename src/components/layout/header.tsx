@@ -26,7 +26,6 @@ const navItems = [
   { href: "/dashboard", label: "Tablero", icon: LayoutDashboard },
   { href: "/map", label: "Mapa", icon: Map },
   { href: "/fleet", label: "Flota", icon: Bus },
-  { href: "/reports", label: "Reportes", icon: FileBarChart },
 ];
 
 export function Header() {
