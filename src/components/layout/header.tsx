@@ -8,7 +8,6 @@ import {
   Map,
   Bus,
   Settings,
-  FileBarChart,
   LogOut,
   User,
 } from "lucide-react";
@@ -27,7 +26,6 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/map", label: "Map", icon: Map },
   { href: "/fleet", label: "Fleet", icon: Bus },
-  { href: "/reports", label: "Reports", icon: FileBarChart },
 ];
 
 export function Header() {
