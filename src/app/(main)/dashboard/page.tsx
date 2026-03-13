@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Fuel, Leaf, Bus, Route, Users, TrendingUp, Zap } from "lucide-react";
 import { KPICard } from "@/components/shared/kpi-card";
 import { ROIComparisonCard } from "@/components/shared/roi-comparison-card";
@@ -155,18 +156,28 @@ export default function DashboardPage() {
     p.passengers > max.passengers ? p : max
   );
 
+  const stagger = {
+    visible: { transition: { staggerChildren: 0.08 } },
+  };
+  const fadeUp = {
+    hidden: { opacity: 0, y: 12, filter: "blur(4px)" },
+    visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.35, ease: "easeOut" } },
+  };
+
   return (
-    <div className="space-y-3">
-      <div>
+    <motion.div className="space-y-3" initial="hidden" animate="visible" variants={stagger}>
+      <motion.div variants={fadeUp}>
         <h1 className="text-xl font-bold">Dashboard</h1>
         <p className="text-xs text-text-secondary">Visión general del sistema de transporte eléctrico</p>
-      </div>
+      </motion.div>
 
       {/* ROI Card - Full Width */}
-      <ROIComparisonCard />
+      <motion.div variants={fadeUp}>
+        <ROIComparisonCard />
+      </motion.div>
 
       {/* KPIs */}
-      <div className="grid gap-3 md:grid-cols-2">
+      <motion.div className="grid gap-3 md:grid-cols-2" variants={fadeUp}>
         <KPICard
           title="Ahorro Combustible"
           value={formatCurrency(MOCK_KPI.fuelSavingsMXN)}
@@ -182,10 +193,10 @@ export default function DashboardPage() {
           icon={<Leaf className="h-4 w-4" />}
           valueClassName="text-accent-green"
         />
-      </div>
+      </motion.div>
 
       {/* Stats rápidas */}
-      <div className="grid gap-3 md:grid-cols-4">
+      <motion.div className="grid gap-3 md:grid-cols-4" variants={fadeUp}>
         {[
           { icon: Bus, label: "Total Buses", value: MOCK_KPI.totalBuses, sub: "en la flota" },
           { icon: Route, label: "Rutas Activas", value: MOCK_KPI.totalRoutes, sub: "5 agencias" },
@@ -200,36 +211,37 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <p className="text-xs text-text-secondary">{label}</p>
-                  <p className="text-xl font-bold leading-none">{value}</p>
+                  <p className="text-xl font-bold leading-none tabular-nums">{value}</p>
                   <p className="text-xs text-text-muted">{sub}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
-      </div>
+      </motion.div>
 
       {/* Gráficas */}
-      <div className="grid gap-3 lg:grid-cols-2">
+      <motion.div className="grid gap-3 lg:grid-cols-2" variants={fadeUp}>
         <ChartWrapper title="Rutas por Agencia" description="Por sistema de transporte">
           <BarChart data={agencyRoutesData} />
         </ChartWrapper>
         <ChartWrapper title="Tendencia de Pasajeros" description="Última semana (miles)">
           <LineChart data={passengerTrendData} />
         </ChartWrapper>
-      </div>
+      </motion.div>
 
       {/* Operaciones */}
-      <div className="grid gap-3 lg:grid-cols-2">
+      <motion.div className="grid gap-3 lg:grid-cols-2" variants={fadeUp}>
         <ChartWrapper title="Ocupación por Franja Horaria" description="Porcentaje de ocupación promedio">
           <LineChart data={frequencyData} />
         </ChartWrapper>
         <ChartWrapper title="Demanda de Buses por Hora" description="Buses requeridos por franja horaria">
           <BarChart data={peakHoursData} />
         </ChartWrapper>
-      </div>
+      </motion.div>
 
       {/* ── Escenario de Expansión de Flota ── */}
+      <motion.div variants={fadeUp}>
       <Card className="border-primary/20">
         <CardHeader className="pb-3 pt-4 px-4">
           <div className="flex items-center justify-between">
@@ -293,22 +305,22 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
               <p className="text-xs text-text-muted">Inversión total</p>
-              <p className="text-base font-bold text-primary-light">{fmt(investmentMXN)}</p>
-              <p className="text-xs text-text-muted">{expansionBuses} buses × ${(expansionModel.unitCostUsd/1000).toFixed(0)}K USD</p>
+              <p className="text-base font-bold text-primary-light tabular-nums">{fmt(investmentMXN)}</p>
+              <p className="text-xs text-text-muted tabular-nums">{expansionBuses} buses × ${(expansionModel.unitCostUsd/1000).toFixed(0)}K USD</p>
             </div>
             <div className={`p-3 rounded-lg ${expansionROI >= 15 ? "bg-accent-green/5 border border-accent-green/20" : expansionROI >= 8 ? "bg-primary/5 border border-primary/20" : "bg-accent-red/5 border border-accent-red/20"}`}>
               <p className="text-xs text-text-muted">ROI proyectado año 1</p>
-              <p className={`text-base font-bold ${expansionROI >= 15 ? "text-accent-green" : expansionROI >= 8 ? "text-primary-light" : "text-accent-red"}`}>{expansionROI.toFixed(1)}%</p>
-              <p className="text-xs text-text-muted">Recuperación en {expansionPayback.toFixed(1)} años</p>
+              <p className={`text-base font-bold tabular-nums ${expansionROI >= 15 ? "text-accent-green" : expansionROI >= 8 ? "text-primary-light" : "text-accent-red"}`}>{expansionROI.toFixed(1)}%</p>
+              <p className="text-xs text-text-muted tabular-nums">Recuperación en {expansionPayback.toFixed(1)} años</p>
             </div>
             <div className="p-3 rounded-lg bg-accent-yellow/5 border border-accent-yellow/20">
               <p className="text-xs text-text-muted">Ahorro combustible/año</p>
-              <p className="text-base font-bold text-accent-yellow">{fmt(annualFuelSaving)}</p>
+              <p className="text-base font-bold text-accent-yellow tabular-nums">{fmt(annualFuelSaving)}</p>
               <p className="text-xs text-text-muted">eléctrico vs diésel</p>
             </div>
             <div className="p-3 rounded-lg bg-accent-green/5 border border-accent-green/20">
               <p className="text-xs text-text-muted flex items-center gap-1"><Zap className="h-3 w-3" />CO₂ evitado/año</p>
-              <p className="text-base font-bold text-accent-green">{Math.round(annualCO2Tons).toLocaleString("es-MX")} ton</p>
+              <p className="text-base font-bold text-accent-green tabular-nums">{Math.round(annualCO2Tons).toLocaleString("es-MX")} ton</p>
               <p className="text-xs text-text-muted">ruta {selectedRoute.shortName} · {selectedRoute.distanceKm} km</p>
             </div>
           </div>
@@ -320,18 +332,20 @@ export default function DashboardPage() {
           <p className="text-xs text-text-muted text-center">Ahorro acumulado vs inversión inicial (millones MXN) · {selectedRoute.shortName} con {expansionModel.manufacturer} {expansionModel.modelName}</p>
         </CardContent>
       </Card>
+      </motion.div>
 
       {/* ── Tablero por Ruta ── */}
-      <div className="grid gap-3 lg:grid-cols-2">
+      <motion.div className="grid gap-3 lg:grid-cols-2" variants={fadeUp}>
         <ChartWrapper title="Pasajeros Diarios por Ruta" description="Estimado por línea de transporte">
           <BarChart data={routePassengersData} horizontal />
         </ChartWrapper>
         <ChartWrapper title="CO₂ Evitado por Ruta vs Diésel" description="Toneladas anuales estimadas con flota eléctrica equivalente">
           <BarChart data={routeCO2Data} />
         </ChartWrapper>
-      </div>
+      </motion.div>
 
       {/* Detalle por ruta */}
+      <motion.div variants={fadeUp}>
       <Card>
         <CardHeader className="pb-2 pt-4 px-4">
           <CardTitle className="text-sm">Tablero por Ruta — Pasajeros · CO₂ · Día de Semana</CardTitle>
@@ -359,19 +373,19 @@ export default function DashboardPage() {
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
                       <span className="text-text-muted flex items-center gap-1"><Users className="h-3 w-3" />Pasajeros/día</span>
-                      <span className="font-medium">{dailyPax >= 1000 ? `${(dailyPax/1000).toFixed(0)}K` : dailyPax}</span>
+                      <span className="font-medium tabular-nums">{dailyPax >= 1000 ? `${(dailyPax/1000).toFixed(0)}K` : dailyPax}</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-text-muted flex items-center gap-1"><Leaf className="h-3 w-3 text-accent-green" />CO₂ evitado/año</span>
-                      <span className="font-medium text-accent-green">{co2Year.toLocaleString("es-MX")} ton</span>
+                      <span className="font-medium text-accent-green tabular-nums">{co2Year.toLocaleString("es-MX")} ton</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-text-muted">Distancia</span>
-                      <span className="font-medium">{route.distanceKm} km</span>
+                      <span className="font-medium tabular-nums">{route.distanceKm} km</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-text-muted">Frec. entre semana</span>
-                      <span className="font-medium">c/{route.frequency} min</span>
+                      <span className="font-medium tabular-nums">c/{route.frequency} min</span>
                     </div>
                   </div>
                 </div>
@@ -380,6 +394,7 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
